@@ -55,7 +55,6 @@ class Attribute
     public function removePlayer(Player $player): self
     // ...
 }
-#endregion
 ```
 
 
