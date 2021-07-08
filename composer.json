@@ -1,6 +1,20 @@
 {
     "name": "jakubgucen/entity-constants-generator",
     "type": "library",
+    "description": "Generates constants with field names and adds get, set, add, remove methods for each entity.",
+    "keywords": [
+        "php",
+        "entity",
+        "doctrine",
+        "orm",
+        "constant",
+        "constants",
+        "get",
+        "set",
+        "add",
+        "remove"
+    ],
+    "license": "MIT",
     "autoload": {
         "classmap": [
             "src/"
@@ -15,5 +29,8 @@
             "email": "jakubgucen@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4.0",
+        "ext-mbstring": "*"
+    }
 }

@@ -8,9 +8,6 @@ use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 
 class Generator
 {
-    const ENTITY_DATA_DIR = 'dir';
-    const ENTITY_DATA_NAMESPACE = 'namespace';
-
     /**
      * @var EntityData[]
      */
