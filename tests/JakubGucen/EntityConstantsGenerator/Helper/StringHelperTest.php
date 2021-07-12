@@ -9,6 +9,9 @@ class StringHelperTest extends TestCase
 {
     public function testCheckStringStartsWith(): void
     {
+        $result = StringHelper::checkStringStartsWith('test', '');
+        $this->assertTrue($result);
+
         $result = StringHelper::checkStringStartsWith('test', 't');
         $this->assertTrue($result);
 
@@ -30,6 +33,9 @@ class StringHelperTest extends TestCase
 
     public function testCheckStringEndsWith(): void
     {
+        $result = StringHelper::checkStringEndsWith('test', '');
+        $this->assertTrue($result);
+
         $result = StringHelper::checkStringEndsWith('test', 't');
         $this->assertTrue($result);
 
