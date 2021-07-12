@@ -2,7 +2,7 @@
 
 namespace JakubGucen\EntityConstantsGenerator\Model;
 
-use JakubGucen\EntityConstantsGenerator\Exception\InvalidEntity;
+use JakubGucen\EntityConstantsGenerator\Exception\InvalidEntityException;
 use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 use ReflectionClass;
 use ReflectionProperty;
@@ -70,7 +70,7 @@ class Entity
     {
         preg_match($this->startAfterExpr, $fileContent, $matches, PREG_OFFSET_CAPTURE);
         if (!is_array($matches) || !count($matches)) {
-            throw new InvalidEntity("Could not find expression: {$this->startAfterExpr} in: {$this->class}");
+            throw new InvalidEntityException("Could not find expression: {$this->startAfterExpr} in: {$this->class}");
         }
 
         $startFrom = $matches[0][1] + strlen($matches[0][0]);
@@ -102,7 +102,7 @@ class Entity
 
         $lastLinePos = mb_strpos($fileContent, $lastLine, $firstLinePos);
         if ($lastLinePos === false) {
-            throw new InvalidEntity("Could not find end of region in: {$this->class}");
+            throw new InvalidEntityException("Could not find end of region in: {$this->class}");
         }
 
         $length = $lastLinePos - $firstLinePos + mb_strlen($lastLine);
