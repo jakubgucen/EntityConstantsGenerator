@@ -158,7 +158,7 @@ class Entity
 
         // generate constant lines
         foreach ($propertyNames as $propertyName) {
-            $constantName = $this->generateConstantName($propertyName);
+            $constantName = StringHelper::generateConstantName($propertyName);
             if (array_search($constantName, $interfacesConsts, true) !== false) {
                 continue;
             }
@@ -167,23 +167,5 @@ class Entity
         }
 
         return $constantLines;
-    }
-
-    protected function generateConstantName(string $propertyName): string
-    {
-        $constantName = '';
-
-        for ($i = 0; $i < mb_strlen($propertyName); $i++) {
-            $char = $propertyName[$i];
-            $charUpper = mb_strtoupper($char);
-
-            if ($i > 0 && $char === $charUpper) {
-                $constantName .= '_';
-            }
-
-            $constantName .= $charUpper;
-        }
-
-        return $constantName;
     }
 }

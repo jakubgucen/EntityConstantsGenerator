@@ -2,7 +2,7 @@
 
 namespace Tests\JakubGucen\EntityConstantsGenerator\Helper;
 
-use JakubGucen\EntityConstantsGenerator\Model\EntityData;
+use JakubGucen\EntityConstantsGenerator\Model\EntitiesData;
 use JakubGucen\EntityConstantsGenerator\Model\Generator;
 use PHPUnit\Framework\TestCase;
 
@@ -38,12 +38,12 @@ class GeneratorTest extends TestCase
 
         $fcs = $this->getEntitiesFcs();
 
-        $entityData = new EntityData();
+        $entityData = new EntitiesData();
         $entityData
             ->setNamespace(self::ENTITY_NAMESPACE)
             ->setDir($this->testEntityDir);
 
-        $generator = new Generator([ $entityData ]);
+        $generator = new Generator([$entityData]);
 
         // run then check
         $generator->run();

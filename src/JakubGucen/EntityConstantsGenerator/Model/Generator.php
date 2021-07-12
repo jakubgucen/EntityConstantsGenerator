@@ -9,7 +9,7 @@ use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 class Generator
 {
     /**
-     * @var EntityData[]
+     * @var EntitiesData[]
      */
     protected array $entitiesData;
 
@@ -19,7 +19,7 @@ class Generator
     protected array $entities = [];
 
     /**
-     * @param EntityData[] $entitiesData
+     * @param EntitiesData[] $entitiesData
      * @throws InvalidArgumentException
      */
     public function __construct(array $entitiesData)
@@ -53,12 +53,12 @@ class Generator
     protected function checkEntitiesData(array $entitiesData): void
     {
         foreach ($entitiesData as $entityData) {
-            if (is_object($entityData) && $entityData instanceof EntityData) {
+            if (is_object($entityData) && $entityData instanceof EntitiesData) {
                 $entityData->check();
                 continue;
             }
 
-            throw new InvalidArgumentException('Invalid item in: entitiesData, expected instance of EntityData');
+            throw new InvalidArgumentException('Invalid item in: entitiesData, expected instance of EntitiesData');
         }
     }
 

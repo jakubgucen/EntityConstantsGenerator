@@ -1,6 +1,6 @@
 # Usage:
 ```php
-$entityData = new EntityData();
+$entityData = new EntitiesData();
 $entityData
     ->setNamespace('App\Entity')
     ->setDir(getcwd() . '/src/Entity');
