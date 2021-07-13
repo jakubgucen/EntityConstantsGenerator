@@ -1,11 +1,11 @@
 # Usage:
 ```php
-$entityData = new EntitiesData();
-$entityData
+$entitiesData = new EntitiesData();
+$entitiesData
     ->setNamespace('App\Entity')
     ->setDir(getcwd() . '/src/Entity');
 
-$generator = new Generator([ $entityData ]);
+$generator = new Generator($entitiesData);
 $generator->run();
 
 // You can rollback the changes with:

@@ -4,14 +4,12 @@ namespace JakubGucen\EntityConstantsGenerator\Model;
 
 use FilesystemIterator;
 use InvalidArgumentException;
+use JakubGucen\EntityConstantsGenerator\Exception\InvalidEntityException;
 use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 
 class Generator
 {
-    /**
-     * @var EntitiesData[]
-     */
-    protected array $entitiesData;
+    protected EntitiesData $entitiesData;
 
     /**
      * @var Entity[]
@@ -19,16 +17,18 @@ class Generator
     protected array $entities = [];
 
     /**
-     * @param EntitiesData[] $entitiesData
      * @throws InvalidArgumentException
      */
-    public function __construct(array $entitiesData)
+    public function __construct(EntitiesData $entitiesData)
     {
-        $this->checkEntitiesData($entitiesData);
+        $entitiesData->check();
 
         $this->entitiesData = $entitiesData;
     }
 
+    /**
+     * @throws InvalidEntityException
+     */
     public function run(): void
     {
         $this->loadEntities();
@@ -38,6 +38,9 @@ class Generator
         }
     }
 
+    /**
+     * @throws InvalidEntityException
+     */
     public function rollback(): void
     {
         $this->loadEntities();
@@ -47,46 +50,29 @@ class Generator
         }
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
-    protected function checkEntitiesData(array $entitiesData): void
-    {
-        foreach ($entitiesData as $entityData) {
-            if (is_object($entityData) && $entityData instanceof EntitiesData) {
-                $entityData->check();
-                continue;
-            }
-
-            throw new InvalidArgumentException('Invalid item in: entitiesData, expected instance of EntitiesData');
-        }
-    }
-
     protected function loadEntities(): void
     {
         $this->entities = [];
 
-        foreach ($this->entitiesData as $entityData) {
-            $entityDir = $entityData->getDir();
-            $entityNamespace = $entityData->getNamespace();
+        $entityDir = $this->entitiesData->getDir();
+        $entityNamespace = $this->entitiesData->getNamespace();
 
-            $iterator = new FilesystemIterator($entityDir, FilesystemIterator::SKIP_DOTS);
+        $iterator = new FilesystemIterator($entityDir, FilesystemIterator::SKIP_DOTS);
 
-            foreach ($iterator as $item) {
-                $fileName = $item->getFilename();
-                if (!StringHelper::checkStringEndsWith($fileName, '.php')) {
-                    continue;
-                }
-
-                $baseName = basename($fileName, '.php');
-                $entityClass = "{$entityNamespace}\\{$baseName}";
-                $entityPath = $item->getPathname();
-
-                $this->entities[] = new Entity(
-                    $entityClass,
-                    $entityPath
-                );
+        foreach ($iterator as $item) {
+            $fileName = $item->getFilename();
+            if (!StringHelper::checkStringEndsWith($fileName, '.php')) {
+                continue;
             }
+
+            $baseName = basename($fileName, '.php');
+            $entityClass = "{$entityNamespace}\\{$baseName}";
+            $entityPath = $item->getPathname();
+
+            $this->entities[] = new Entity(
+                $entityClass,
+                $entityPath
+            );
         }
     }
 }

@@ -2,78 +2,139 @@
 
 namespace Tests\JakubGucen\EntityConstantsGenerator\Helper;
 
+use InvalidArgumentException;
+use JakubGucen\EntityConstantsGenerator\Exception\InvalidEntityException;
 use JakubGucen\EntityConstantsGenerator\Model\EntitiesData;
 use JakubGucen\EntityConstantsGenerator\Model\Generator;
 use PHPUnit\Framework\TestCase;
 
 class GeneratorTest extends TestCase
 {
-    const ENTITY_NAMESPACE = 'TestResource\JakubGucen\EntityConstantsGenerator\Entity';
-    const TEST_ENTITIES = [
-        'Attribute',
-        'Player'
-    ];
-
     protected ?string $projectDir = null;
-    protected ?string $testEntityDir = null;
 
     protected function setUp(): void
     {
         $this->projectDir = getcwd();
-        $this->testEntityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/Entity';
     }
 
     protected function tearDown(): void
     {
-        $path = $this->getEntityPath('AttributeTmp');
+        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/Entity';
+
+        $path = $this->getEntityPath($entityDir, 'AttributeTmp');
         @unlink($path);
 
-        $path = $this->getEntityPath('PlayerTmp');
+        $path = $this->getEntityPath($entityDir, 'PlayerTmp');
         @unlink($path);
     }
 
     public function testRun()
     {
-        $this->loadEntities();
+        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/Entity';
+        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\Entity';
+        $entityNames = [
+            'Attribute',
+            'Player'
+        ];
 
-        $fcs = $this->getEntitiesFcs();
+        $this->loadEntities($entityDir, $entityNames);
+        $fcs = $this->getEntitiesFcs($entityDir, $entityNames);
 
-        $entityData = new EntitiesData();
-        $entityData
-            ->setNamespace(self::ENTITY_NAMESPACE)
-            ->setDir($this->testEntityDir);
+        $entitiesData = new EntitiesData();
+        $entitiesData
+            ->setNamespace($entityNamespace)
+            ->setDir($entityDir);
 
-        $generator = new Generator([$entityData]);
+        $generator = new Generator($entitiesData);
 
         // run then check
         $generator->run();
-        $fcsAfterRun = $this->getEntitiesFcs();
+        $fcsAfterRun = $this->getEntitiesFcs($entityDir, $entityNames);
         $this->checkEntitiesFcs($fcs, $fcsAfterRun, false);
-        $this->checkEntityAttributeAfterRun();
-        $this->checkEntityPlayerAfterRun();
+        $this->checkEntityAttributeAfterRun($entityDir, $entityNamespace);
+        $this->checkEntityPlayerAfterRun($entityDir, $entityNamespace);
 
         // rollback then check
         $generator->rollback();
-        $fcsAfterRollback = $this->getEntitiesFcs();
+        $fcsAfterRollback = $this->getEntitiesFcs($entityDir, $entityNames);
         $this->checkEntitiesFcs($fcs, $fcsAfterRollback, true);
     }
 
-    protected function getEntityPath(string $name): string
+    public function testRunInvalid(): void
     {
-        return $this->testEntityDir . '/' . $name . '.php';
+        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidEntity';
+        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidEntity';
+        $entityNames = [
+            'Player'
+        ];
+
+        $this->runForInvalidEntity(
+            $entityDir,
+            $entityNamespace,
+            $entityNames,
+            'Could not find expression'
+        );
     }
 
-    protected function getEntityFc(string $name): string
+    public function testRunInvalidRegion(): void
     {
-        $path = $this->getEntityPath($name);
+        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidRegionEntity';
+        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidRegionEntity';
+        $entityNames = [
+            'Player'
+        ];
+
+        $this->runForInvalidEntity(
+            $entityDir,
+            $entityNamespace,
+            $entityNames,
+            'Could not find end of region in'
+        );
+    }
+
+    protected function runForInvalidEntity(
+        string $entityDir,
+        string $entityNamespace,
+        array $entityNames,
+        string $expectedExceptionMessage
+    ): void {
+        $this->loadEntities($entityDir, $entityNames);
+        $fcs = $this->getEntitiesFcs($entityDir, $entityNames);
+
+        $entitiesData = new EntitiesData();
+        $entitiesData
+            ->setNamespace($entityNamespace)
+            ->setDir($entityDir);
+
+        $generator = new Generator($entitiesData);
+        try {
+            $generator->run();
+        } catch (InvalidEntityException $e) {}
+
+        $this->assertTrue(isset($e));
+        $this->assertInstanceOf(InvalidEntityException::class, $e);
+        $this->assertStringContainsString($expectedExceptionMessage, $e->getMessage());
+
+        $fcsAfterRun = $this->getEntitiesFcs($entityDir, $entityNames);
+        $this->checkEntitiesFcs($fcs, $fcsAfterRun, true);
+    }
+
+    protected function getEntityPath(string $entityDir, string $name): string
+    {
+        return $entityDir . '/' . $name . '.php';
+    }
+
+    protected function getEntityFc(string $entityDir, string $name): string
+    {
+        $path = $this->getEntityPath($entityDir, $name);
         return file_get_contents($path);
     }
 
-    protected function getEntitiesFcs(): array
+    protected function getEntitiesFcs(string $entityDir, array $entityNames): array
     {
         $fcs = [];
-        foreach (self::TEST_ENTITIES as $entityName) {
-            $fcs[$entityName] = $this->getEntityFc($entityName);
+        foreach ($entityNames as $entityName) {
+            $fcs[$entityName] = $this->getEntityFc($entityDir, $entityName);
         }
 
         return $fcs;
@@ -97,11 +158,14 @@ class GeneratorTest extends TestCase
     /**
      * @return string new path
      */
-    protected function reloadEntity(string $entityName, string $newEntityName): string
-    {
-        $fc = $this->getEntityFc($entityName);
+    protected function reloadEntity(
+        string $entityDir,
+        string $entityName,
+        string $newEntityName
+    ): string {
+        $fc = $this->getEntityFc($entityDir, $entityName);
 
-        $newPath = $this->getEntityPath($newEntityName);
+        $newPath = $this->getEntityPath($entityDir, $newEntityName);
         $newFc = str_replace(
             [
                 "class {$entityName}",
@@ -122,20 +186,20 @@ class GeneratorTest extends TestCase
         return $newPath;
     }
 
-    protected function loadEntities(): void
+    protected function loadEntities(string $entityDir, array $entityNames): void
     {
-        foreach (self::TEST_ENTITIES as $entityName) {
-            $path = $this->getEntityPath($entityName);
+        foreach ($entityNames as $entityName) {
+            $path = $this->getEntityPath($entityDir, $entityName);
             $this->loadEntity($path);
         }
     }
 
-    protected function checkEntityAttributeAfterRun(): void
+    protected function checkEntityAttributeAfterRun(string $entityDir, string $entityNamespace): void
     {
         // load the entity
-        $newPath = $this->reloadEntity('Attribute', 'AttributeTmp');
+        $newPath = $this->reloadEntity($entityDir, 'Attribute', 'AttributeTmp');
 
-        $class = self::ENTITY_NAMESPACE . '\AttributeTmp';
+        $class = $entityNamespace . '\AttributeTmp';
         $attribute = new $class;
 
         // check constants
@@ -146,7 +210,7 @@ class GeneratorTest extends TestCase
         $this->assertSame('players', $class::PLAYERS);
 
         // check methods
-        $playerClass = self::ENTITY_NAMESPACE . '\Player';
+        $playerClass = $entityNamespace . '\Player';
         $player = new $playerClass;
 
         $attribute
@@ -172,12 +236,12 @@ class GeneratorTest extends TestCase
         unlink($newPath);
     }
 
-    protected function checkEntityPlayerAfterRun(): void
+    protected function checkEntityPlayerAfterRun(string $entityDir, string $entityNamespace): void
     {
         // load the entity
-        $newPath = $this->reloadEntity('Player', 'PlayerTmp');
+        $newPath = $this->reloadEntity($entityDir, 'Player', 'PlayerTmp');
 
-        $class = self::ENTITY_NAMESPACE . '\PlayerTmp';
+        $class = $entityNamespace . '\PlayerTmp';
         $player = new $class;
 
         // check constants
