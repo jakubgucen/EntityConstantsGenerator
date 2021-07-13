@@ -10,10 +10,6 @@ class Player
     #region JakubGucen-EntityConstantsGenerator
     use \JakubGucen\EntityConstantsGenerator\Traits\MetaEntityTrait;
     const ID = 'id';
-    const ONE_HANDED = 'oneHanded';
-    const PLAYER = 'player';
-    const PLAYERS = 'players';
-    const STRENGTH = 'strength';
 
     /**
      * @ORM\Id
