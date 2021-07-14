@@ -4,7 +4,7 @@ namespace JakubGucen\EntityConstantsGenerator\Model;
 
 use FilesystemIterator;
 use InvalidArgumentException;
-use JakubGucen\EntityConstantsGenerator\Exception\InvalidEntityException;
+use JakubGucen\EntityConstantsGenerator\Exception\EntityFileException;
 use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 
 class Generator
@@ -27,7 +27,7 @@ class Generator
     }
 
     /**
-     * @throws InvalidEntityException
+     * @throws EntityFileException
      */
     public function run(): void
     {
@@ -39,7 +39,7 @@ class Generator
     }
 
     /**
-     * @throws InvalidEntityException
+     * @throws EntityFileException
      */
     public function rollback(): void
     {
@@ -69,7 +69,7 @@ class Generator
             $entityClass = "{$entityNamespace}\\{$baseName}";
             $entityPath = $item->getPathname();
 
-            $this->entities[] = new Entity(
+            $this->entities[] = new EntityFile(
                 $entityClass,
                 $entityPath
             );

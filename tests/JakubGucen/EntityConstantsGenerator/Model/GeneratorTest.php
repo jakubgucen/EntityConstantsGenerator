@@ -2,8 +2,7 @@
 
 namespace Tests\JakubGucen\EntityConstantsGenerator\Helper;
 
-use InvalidArgumentException;
-use JakubGucen\EntityConstantsGenerator\Exception\InvalidEntityException;
+use JakubGucen\EntityConstantsGenerator\Exception\EntityFileException;
 use JakubGucen\EntityConstantsGenerator\Model\EntitiesData;
 use JakubGucen\EntityConstantsGenerator\Model\Generator;
 use PHPUnit\Framework\TestCase;
@@ -109,10 +108,10 @@ class GeneratorTest extends TestCase
         $generator = new Generator($entitiesData);
         try {
             $generator->run();
-        } catch (InvalidEntityException $e) {}
+        } catch (EntityFileException $e) {}
 
         $this->assertTrue(isset($e));
-        $this->assertInstanceOf(InvalidEntityException::class, $e);
+        $this->assertInstanceOf(EntityFileException::class, $e);
         $this->assertStringContainsString($expectedExceptionMessage, $e->getMessage());
 
         $fcsAfterRun = $this->getEntitiesFcs($entityDir, $entityNames);
@@ -127,7 +126,10 @@ class GeneratorTest extends TestCase
     protected function getEntityFc(string $entityDir, string $name): string
     {
         $path = $this->getEntityPath($entityDir, $name);
-        return file_get_contents($path);
+        $fileContent = file_get_contents($path);
+        $this->assertIsString($fileContent);
+
+        return $fileContent;
     }
 
     protected function getEntitiesFcs(string $entityDir, array $entityNames): array

@@ -4,6 +4,6 @@ namespace JakubGucen\EntityConstantsGenerator\Exception;
 
 use Exception;
 
-class InvalidEntityException extends Exception
+class EntityFileException extends Exception
 {
 }
