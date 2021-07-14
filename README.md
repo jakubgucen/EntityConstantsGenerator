@@ -1,10 +1,10 @@
-# Installation:
+### Installation:
 ```
 composer require jakubgucen/entity-constants-generator
 ```
 
 
-# Usage:
+### Usage:
 ```php
 $entitiesData = new EntitiesData();
 $entitiesData
@@ -19,7 +19,7 @@ $generator->run();
 ```
 
 
-# Sample result:
+### Sample result:
 ```php
 class Attribute
 {
@@ -64,7 +64,7 @@ class Attribute
 ```
 
 
-# New methods in each entity:
+### New methods in each entity:
 ```php
 public function get(string $propertyName)
 public function set(string $propertyName, $value): self
