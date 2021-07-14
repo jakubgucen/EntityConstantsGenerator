@@ -1,3 +1,9 @@
+# Installation:
+```
+composer require jakubgucen/entity-constants-generator
+```
+
+
 # Usage:
 ```php
 $entitiesData = new EntitiesData();
