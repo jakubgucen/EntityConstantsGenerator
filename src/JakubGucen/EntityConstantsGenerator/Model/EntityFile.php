@@ -3,6 +3,7 @@
 namespace JakubGucen\EntityConstantsGenerator\Model;
 
 use JakubGucen\EntityConstantsGenerator\Exception\EntityFileException;
+use JakubGucen\EntityConstantsGenerator\Exception\FileIOException;
 use ReflectionClass;
 
 class EntityFile
@@ -10,29 +11,31 @@ class EntityFile
     const REGION_START = '#region JakubGucen-EntityConstantsGenerator';
     const REGION_END = '#endregion';
 
-    protected string $class;
-    protected string $path;
-    protected ReflectionClass $reflectionClass;
-    protected string $eol;
-    protected string $tab;
+    private FileIO $fileIO;
+    private string $class;
+    private string $eol;
+    private string $tab;
+    private ?ReflectionClass $reflectionClass = null;
+    private ?ClassConstantsGenerator $classConstantsGenerator = null;
 
-    public function __construct(string $class, string $path)
+    public function __construct(FileIO $fileIO, string $class)
     {
+        $this->fileIO = $fileIO;
         $this->class = $class;
-        $this->path = $path;
-        $this->reflectionClass = new ReflectionClass($this->class);
         $this->eol = "\n";
         $this->tab = '    ';
     }
 
+    /**
+     * @throws FileIOException
+     * @throws EntityFileException
+     */
     public function generate(): void
     {
-        $fileContent = $this->getFileContent();
+        $fileContent = $this->fileIO->getFileContent();
         $fileContent = $this->removeRegion($fileContent);
 
-        $classConstantsGenerator = new ClassConstantsGenerator(
-            $this->reflectionClass
-        );
+        $classConstantsGenerator = $this->getClassConstantsGenerator();
         $constantLines = $classConstantsGenerator->generateConstantLines();
 
         $lines = [
@@ -45,36 +48,42 @@ class EntityFile
         $region = $this->generateRegion($lines);
         $fileContent = $this->addRegion($fileContent, $region);
 
-        $this->saveFileContent($fileContent);
+        $this->fileIO->saveFileContent($fileContent);
     }
 
+    /**
+     * @throws FileIOException
+     * @throws EntityFileException
+     */
     public function rollback(): void
     {
-        $fileContent = $this->getFileContent();
+        $fileContent = $this->fileIO->getFileContent();
         $fileContent = $this->removeRegion($fileContent);
 
-        $this->saveFileContent($fileContent);
+        $this->fileIO->saveFileContent($fileContent);
     }
 
-    protected function getFileContent(): string
+    private function getReflectionClass(): ReflectionClass
     {
-        $fileContent = file_get_contents($this->path);
-        if ($fileContent === false) {
-            throw new EntityFileException('Could not get the file content: ' . $this->path);
+        if ($this->reflectionClass === null) {
+            $this->reflectionClass = new ReflectionClass($this->class);
         }
 
-        return $fileContent;
+        return $this->reflectionClass;
     }
 
-    protected function saveFileContent(string $newFileContent): void
+    private function getClassConstantsGenerator(): ClassConstantsGenerator
     {
-        $bytes = file_put_contents($this->path, $newFileContent);
-        if ($bytes === false) {
-            throw new EntityFileException('Could not save the file content: ' . $this->path);
+        if ($this->classConstantsGenerator === null) {
+            $this->classConstantsGenerator = new ClassConstantsGenerator(
+                $this->getReflectionClass()
+            );
         }
+
+        return $this->classConstantsGenerator;
     }
 
-    protected function generateRegion(array $lines): string
+    private function generateRegion(array $lines): string
     {
         $lines = array_map(
             fn (string $line) => $this->prepareLine($line),
@@ -85,9 +94,23 @@ class EntityFile
         return $region;
     }
 
-    protected function addRegion(string $fileContent, string $region): string
+    private function prepareLine(string $line): string
     {
-        $startAfterExpr = '/class ' . $this->reflectionClass->getShortName() . '.*' . $this->eol . '{' . $this->eol . '/';
+        return "{$this->tab}{$line}";
+    }
+
+    private function prepareRegionEnd(string $lines): string
+    {
+        return $lines . "{$this->eol}{$this->eol}";
+    }
+
+    /**
+     * @throws EntityFileException
+     */
+    private function addRegion(string $fileContent, string $region): string
+    {
+        $reflectionClass = $this->getReflectionClass();
+        $startAfterExpr = '/class ' . $reflectionClass->getShortName() . '.*' . $this->eol . '{' . $this->eol . '/';
         preg_match($startAfterExpr, $fileContent, $matches, PREG_OFFSET_CAPTURE);
         if (!is_array($matches) || !count($matches)) {
             throw new EntityFileException("Could not find expression: {$startAfterExpr} in: {$this->class}");
@@ -99,17 +122,10 @@ class EntityFile
         return $fileContent;
     }
 
-    protected function prepareLine(string $line): string
-    {
-        return "{$this->tab}{$line}";
-    }
-
-    protected function prepareRegionEnd(string $lines): string
-    {
-        return $lines . "{$this->eol}{$this->eol}";
-    }
-
-    protected function removeRegion(string $fileContent): string
+    /**
+     * @throws EntityFileException
+     */
+    private function removeRegion(string $fileContent): string
     {
         $firstLine = $this->prepareLine(self::REGION_START);
         $lastLine = $this->prepareLine(self::REGION_END);

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class GeneratorTest extends TestCase
 {
-    protected ?string $projectDir = null;
+    private ?string $projectDir = null;
 
     protected function setUp(): void
     {
@@ -91,7 +91,7 @@ class GeneratorTest extends TestCase
         );
     }
 
-    protected function runForInvalidEntity(
+    private function runForInvalidEntity(
         string $entityDir,
         string $entityNamespace,
         array $entityNames,
@@ -118,12 +118,12 @@ class GeneratorTest extends TestCase
         $this->checkEntitiesFcs($fcs, $fcsAfterRun, true);
     }
 
-    protected function getEntityPath(string $entityDir, string $name): string
+    private function getEntityPath(string $entityDir, string $name): string
     {
         return $entityDir . '/' . $name . '.php';
     }
 
-    protected function getEntityFc(string $entityDir, string $name): string
+    private function getEntityFc(string $entityDir, string $name): string
     {
         $path = $this->getEntityPath($entityDir, $name);
         $fileContent = file_get_contents($path);
@@ -132,7 +132,7 @@ class GeneratorTest extends TestCase
         return $fileContent;
     }
 
-    protected function getEntitiesFcs(string $entityDir, array $entityNames): array
+    private function getEntitiesFcs(string $entityDir, array $entityNames): array
     {
         $fcs = [];
         foreach ($entityNames as $entityName) {
@@ -142,7 +142,7 @@ class GeneratorTest extends TestCase
         return $fcs;
     }
 
-    protected function checkEntitiesFcs(
+    private function checkEntitiesFcs(
         array $expectedFcs,
         array $actualFcs,
         bool $expectedSame
@@ -152,7 +152,7 @@ class GeneratorTest extends TestCase
         }
     }
 
-    protected function loadEntity(string $path): void
+    private function loadEntity(string $path): void
     {
         require $path;
     }
@@ -160,7 +160,7 @@ class GeneratorTest extends TestCase
     /**
      * @return string new path
      */
-    protected function reloadEntity(
+    private function reloadEntity(
         string $entityDir,
         string $entityName,
         string $newEntityName
@@ -188,7 +188,7 @@ class GeneratorTest extends TestCase
         return $newPath;
     }
 
-    protected function loadEntities(string $entityDir, array $entityNames): void
+    private function loadEntities(string $entityDir, array $entityNames): void
     {
         foreach ($entityNames as $entityName) {
             $path = $this->getEntityPath($entityDir, $entityName);
@@ -196,7 +196,7 @@ class GeneratorTest extends TestCase
         }
     }
 
-    protected function checkEntityAttributeAfterRun(string $entityDir, string $entityNamespace): void
+    private function checkEntityAttributeAfterRun(string $entityDir, string $entityNamespace): void
     {
         // load the entity
         $newPath = $this->reloadEntity($entityDir, 'Attribute', 'AttributeTmp');
@@ -238,7 +238,7 @@ class GeneratorTest extends TestCase
         unlink($newPath);
     }
 
-    protected function checkEntityPlayerAfterRun(string $entityDir, string $entityNamespace): void
+    private function checkEntityPlayerAfterRun(string $entityDir, string $entityNamespace): void
     {
         // load the entity
         $newPath = $this->reloadEntity($entityDir, 'Player', 'PlayerTmp');

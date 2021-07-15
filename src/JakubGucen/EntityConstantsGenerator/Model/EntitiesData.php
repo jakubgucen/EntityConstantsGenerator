@@ -7,8 +7,8 @@ use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 
 class EntitiesData
 {
-    protected ?string $dir = null;
-    protected ?string $namespace = null;
+    private ?string $dir = null;
+    private ?string $namespace = null;
 
     /**
      * @throws InvalidArgumentException
@@ -30,6 +30,8 @@ class EntitiesData
     }
 
     /**
+     * Set the path of the entity directory, e.g.: `getcwd() . '/src/Entity'`.
+     * 
      * @throws InvalidArgumentException
      */
     public function setDir(string $dir): self
@@ -46,6 +48,8 @@ class EntitiesData
     }
 
     /**
+     * Set the namespace of the entities, e.g.: `App\Entity`.
+     * 
      * @throws InvalidArgumentException
      */
     public function setNamespace(string $namespace): self
@@ -59,7 +63,7 @@ class EntitiesData
     /**
      * @throws InvalidArgumentException
      */
-    protected function checkPath(string $path, string $paramName): void
+    private function checkPath(string $path, string $paramName): void
     {
         if (StringHelper::checkStringEndsWith($path, '\\')) {
             throw new InvalidArgumentException("Entity {$paramName} cannot ends with \.");

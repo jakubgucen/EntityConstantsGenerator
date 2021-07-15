@@ -8,7 +8,7 @@ use ReflectionClass;
 
 class ClassConstantsGenerator
 {
-    protected ReflectionClass $reflectionClass;
+    private ReflectionClass $reflectionClass;
 
     public function __construct(ReflectionClass $reflectionClass)
     {
@@ -42,7 +42,7 @@ class ClassConstantsGenerator
         return $constantLines;
     }
 
-    protected function generatePropertyNames(): array
+    private function generatePropertyNames(): array
     {
         $properties = $this->reflectionClass->getProperties();
         $propertyNames = array_map(
