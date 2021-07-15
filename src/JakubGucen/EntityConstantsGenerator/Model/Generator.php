@@ -14,7 +14,7 @@ class Generator
     private EntitiesData $entitiesData;
 
     /**
-     * @var Entity[]
+     * @var EntityFile[]
      */
     private array $entities = [];
     private bool $entietiesPrepared = false;

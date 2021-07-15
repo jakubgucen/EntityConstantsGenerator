@@ -4,6 +4,7 @@ namespace JakubGucen\EntityConstantsGenerator\Model;
 
 use JakubGucen\EntityConstantsGenerator\Exception\EntityFileException;
 use JakubGucen\EntityConstantsGenerator\Exception\FileIOException;
+use JakubGucen\EntityConstantsGenerator\Interfaces\IFileIO;
 use ReflectionClass;
 
 class EntityFile
@@ -11,14 +12,14 @@ class EntityFile
     const REGION_START = '#region JakubGucen-EntityConstantsGenerator';
     const REGION_END = '#endregion';
 
-    private FileIO $fileIO;
+    private IFileIO $fileIO;
     private string $class;
     private string $eol;
     private string $tab;
     private ?ReflectionClass $reflectionClass = null;
     private ?ClassConstantsGenerator $classConstantsGenerator = null;
 
-    public function __construct(FileIO $fileIO, string $class)
+    public function __construct(IFileIO $fileIO, string $class)
     {
         $this->fileIO = $fileIO;
         $this->class = $class;
@@ -32,7 +33,7 @@ class EntityFile
      */
     public function generate(): void
     {
-        $fileContent = $this->fileIO->getFileContent();
+        $fileContent = $this->fileIO->getContent();
         $fileContent = $this->removeRegion($fileContent);
 
         $classConstantsGenerator = $this->getClassConstantsGenerator();
@@ -48,7 +49,9 @@ class EntityFile
         $region = $this->generateRegion($lines);
         $fileContent = $this->addRegion($fileContent, $region);
 
-        $this->fileIO->saveFileContent($fileContent);
+        $this->fileIO
+            ->setContent($fileContent)
+            ->save();
     }
 
     /**
@@ -57,10 +60,12 @@ class EntityFile
      */
     public function rollback(): void
     {
-        $fileContent = $this->fileIO->getFileContent();
+        $fileContent = $this->fileIO->getContent();
         $fileContent = $this->removeRegion($fileContent);
 
-        $this->fileIO->saveFileContent($fileContent);
+        $this->fileIO
+            ->setContent($fileContent)
+            ->save();
     }
 
     private function getReflectionClass(): ReflectionClass

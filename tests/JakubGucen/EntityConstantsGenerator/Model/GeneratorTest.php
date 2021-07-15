@@ -27,7 +27,7 @@ class GeneratorTest extends TestCase
         @unlink($path);
     }
 
-    public function testRun()
+    public function testRunEntity()
     {
         $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/Entity';
         $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\Entity';
@@ -59,7 +59,32 @@ class GeneratorTest extends TestCase
         $this->checkEntitiesFcs($fcs, $fcsAfterRollback, true);
     }
 
-    public function testRunInvalid(): void
+    public function testRunRegionEntity()
+    {
+        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/RegionEntity';
+        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\RegionEntity';
+        $entityNames = [
+            'Attribute',
+            'Player'
+        ];
+
+        $this->loadEntities($entityDir, $entityNames);
+        $fcs = $this->getEntitiesFcs($entityDir, $entityNames);
+
+        $entitiesData = new EntitiesData();
+        $entitiesData
+            ->setNamespace($entityNamespace)
+            ->setDir($entityDir);
+
+        $generator = new Generator($entitiesData);
+
+        // run then check
+        $generator->run();
+        $fcsAfterRun = $this->getEntitiesFcs($entityDir, $entityNames);
+        $this->checkEntitiesFcs($fcs, $fcsAfterRun, true);
+    }
+
+    public function testRunInvalidEntity(): void
     {
         $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidEntity';
         $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidEntity';
@@ -75,7 +100,7 @@ class GeneratorTest extends TestCase
         );
     }
 
-    public function testRunInvalidRegion(): void
+    public function testRunInvalidRegionEntity(): void
     {
         $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidRegionEntity';
         $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidRegionEntity';
