@@ -10,6 +10,7 @@ class FileIO implements IFileIO
     private string $path;
     private ?string $content = null;
     private ?string $onDiskContent = null;
+    private ?string $originalContent = null;
     private bool $isDirty = false;
 
     public function __construct(string $path)
@@ -60,6 +61,17 @@ class FileIO implements IFileIO
         return $this;
     }
 
+    public function restore(): IFileIO
+    {
+        if ($this->originalContent === null) {
+            return $this;
+        }
+
+        $this->setContent($this->originalContent);
+
+        return $this;
+    }
+
     /**
      * @throws FileIOException
      */
@@ -75,6 +87,7 @@ class FileIO implements IFileIO
         }
 
         $this->onDiskContent = $content;
+        $this->originalContent ??= $content;
 
         return $this->onDiskContent;
     }

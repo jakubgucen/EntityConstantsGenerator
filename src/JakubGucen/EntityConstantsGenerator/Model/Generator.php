@@ -14,12 +14,6 @@ class Generator
     private EntitiesData $entitiesData;
 
     /**
-     * @var EntityFile[]
-     */
-    private array $entities = [];
-    private bool $entietiesPrepared = false;
-
-    /**
      * @throws InvalidArgumentException
      */
     public function __construct(EntitiesData $entitiesData)
@@ -37,13 +31,18 @@ class Generator
      */
     public function run(): void
     {
-        $this->prepareEntities();
+        $entityFiles = $this->loadEntities();
+        $generated = [];
 
-        foreach ($this->entities as $entity) {
+        foreach ($entityFiles as $entityFile) {
             try {
-                $entity->generate();
+                $entityFile->generate();
+                $generated[] = $entityFile;
             } catch (Throwable $e) {
-                $this->rollback();
+                array_map(
+                    fn (EntityFile $entityFile) => $entityFile->restore(),
+                    $generated
+                );
                 throw $e;
             }
         }
@@ -58,28 +57,19 @@ class Generator
      */
     public function rollback(): void
     {
-        $this->prepareEntities();
+        $entityFiles = $this->loadEntities();
 
-        foreach ($this->entities as $entity) {
-            $entity->rollback();
+        foreach ($entityFiles as $entityFile) {
+            $entityFile->rollback();
         }
     }
 
-    private function prepareEntities(): void
+    /**
+     * @return EntityFile[]
+     */
+    private function loadEntities(): array
     {
-        if ($this->entietiesPrepared) {
-            return;
-        }
-
-        $this->loadEntities();
-
-        $this->entietiesPrepared = true;
-    }
-
-    private function loadEntities(): void
-    {
-        $this->entities = [];
-
+        $entityFiles = [];
         $entityDir = $this->entitiesData->getDir();
         $entityNamespace = $this->entitiesData->getNamespace();
 
@@ -97,7 +87,14 @@ class Generator
             $fileIO = new FileIO($item->getPathname());
             $entityFile = new EntityFile($fileIO, $entityClass);
 
-            $this->entities[] = $entityFile;
+            $entityFiles[] = $entityFile;
         }
+
+        usort(
+            $entityFiles,
+            fn (EntityFile $a, EntityFile $b) => strcmp($a->getClass(), $b->getClass())
+        );
+
+        return $entityFiles;
     }
 }

@@ -27,6 +27,11 @@ class EntityFile
         $this->tab = '    ';
     }
 
+    public function getClass(): string
+    {
+        return $this->class;
+    }
+
     /**
      * @throws FileIOException
      * @throws EntityFileException
@@ -65,6 +70,13 @@ class EntityFile
 
         $this->fileIO
             ->setContent($fileContent)
+            ->save();
+    }
+
+    public function restore(): void
+    {
+        $this->fileIO
+            ->restore()
             ->save();
     }
 

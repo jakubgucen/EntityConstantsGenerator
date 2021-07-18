@@ -65,7 +65,7 @@ class GeneratorTest extends TestCase
         $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\RegionEntity';
         $entityNames = [
             'Attribute',
-            'Player'
+            'Player',
         ];
 
         $this->loadEntities($entityDir, $entityNames);
@@ -89,7 +89,7 @@ class GeneratorTest extends TestCase
         $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidEntity';
         $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidEntity';
         $entityNames = [
-            'Player'
+            'Player',
         ];
 
         $this->runForInvalidEntity(
@@ -105,7 +105,7 @@ class GeneratorTest extends TestCase
         $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidRegionEntity';
         $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidRegionEntity';
         $entityNames = [
-            'Player'
+            'Player',
         ];
 
         $this->runForInvalidEntity(
@@ -113,6 +113,24 @@ class GeneratorTest extends TestCase
             $entityNamespace,
             $entityNames,
             'Could not find end of region in'
+        );
+    }
+
+    public function testRunInvalidOneEntity(): void
+    {
+        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidOneEntity';
+        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidOneEntity';
+        $entityNames = [
+            'Attribute',
+            'Player',
+            'PlayerInvalid',
+        ];
+
+        $this->runForInvalidEntity(
+            $entityDir,
+            $entityNamespace,
+            $entityNames,
+            'Could not find expression'
         );
     }
 
