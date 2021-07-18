@@ -1,5 +1,5 @@
 ### What's this?
-Generates constants containing field names and adds methods in each entity: get, set, add, remove.
+This package generates constants containing field names and adds methods in each entity: get, set, add, remove.
 This should make it easier to build DQL queries, implement web tests, and set entity variables based on requests.
 
 
