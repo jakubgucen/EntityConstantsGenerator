@@ -32,17 +32,12 @@ class Generator
     public function run(): void
     {
         $entityFiles = $this->loadEntities();
-        $generated = [];
 
         foreach ($entityFiles as $entityFile) {
             try {
                 $entityFile->generate();
-                $generated[] = $entityFile;
             } catch (Throwable $e) {
-                array_map(
-                    fn (EntityFile $entityFile) => $entityFile->restore(),
-                    $generated
-                );
+                $this->restoreEntityFiles($entityFiles);
                 throw $e;
             }
         }
@@ -96,5 +91,13 @@ class Generator
         );
 
         return $entityFiles;
+    }
+
+    private function restoreEntityFiles(array $entityFiles): void
+    {
+        array_map(
+            fn (EntityFile $entityFile) => $entityFile->restore(),
+            $entityFiles
+        );
     }
 }
