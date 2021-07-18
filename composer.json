@@ -1,7 +1,7 @@
 {
     "name": "jakubgucen/entity-constants-generator",
     "type": "library",
-    "description": "Generates constants with field names and adds get, set, add, remove methods for each entity.",
+    "description": "Generates constants containing field names and adds methods in each entity: get, set, add, remove.",
     "keywords": [
         "php",
         "entity",
