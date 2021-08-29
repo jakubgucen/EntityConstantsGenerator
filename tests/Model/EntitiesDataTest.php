@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\JakubGucen\EntityConstantsGenerator\Helper;
+namespace JakubGucen\EntityConstantsGenerator\Tests\Helper;
 
 use InvalidArgumentException;
 use JakubGucen\EntityConstantsGenerator\Model\EntitiesData;

@@ -1,6 +1,6 @@
 <?php
 
-namespace TestResource\JakubGucen\EntityConstantsGenerator\InvalidRegionEntity;
+namespace JakubGucen\EntityConstantsGenerator\TestResource\InvalidRegionEntity;
 
 /**
  * @ORM\Entity

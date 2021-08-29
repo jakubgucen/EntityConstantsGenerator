@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\JakubGucen\EntityConstantsGenerator\Helper;
+namespace JakubGucen\EntityConstantsGenerator\Tests\Helper;
 
 use JakubGucen\EntityConstantsGenerator\Helper\StringHelper;
 use PHPUnit\Framework\TestCase;

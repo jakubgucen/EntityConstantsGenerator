@@ -1,6 +1,6 @@
 <?php
 
-namespace TestResource\JakubGucen\EntityConstantsGenerator\InvalidOneEntity;
+namespace JakubGucen\EntityConstantsGenerator\TestResource\InvalidOneEntity;
 
 /**
  * @ORM\Entity

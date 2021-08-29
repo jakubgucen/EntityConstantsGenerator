@@ -1,11 +1,16 @@
 <?php
 
-namespace TestResource\JakubGucen\EntityConstantsGenerator\InvalidOneEntity;
+namespace JakubGucen\EntityConstantsGenerator\TestResource\Entity;
+
+interface IPlayer
+{
+    const ID = 'id';
+}
 
 /**
  * @ORM\Entity
  */
-class  PlayerInvalid
+class Player implements IPlayer
 {
     /**
      * @ORM\Id

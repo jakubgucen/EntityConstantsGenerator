@@ -1,6 +1,6 @@
 <?php
 
-namespace TestResource\JakubGucen\EntityConstantsGenerator\RegionEntity;
+namespace JakubGucen\EntityConstantsGenerator\TestResource\InvalidOneEntity;
 
 interface IPlayer
 {
@@ -12,10 +12,6 @@ interface IPlayer
  */
 class Player implements IPlayer
 {
-    #region JakubGucen-EntityConstantsGenerator
-    use \JakubGucen\EntityConstantsGenerator\Traits\MetaEntityTrait;
-    #endregion
-
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

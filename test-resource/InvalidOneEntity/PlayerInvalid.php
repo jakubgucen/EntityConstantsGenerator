@@ -1,11 +1,11 @@
 <?php
 
-namespace TestResource\JakubGucen\EntityConstantsGenerator\InvalidEntity;
+namespace JakubGucen\EntityConstantsGenerator\TestResource\InvalidOneEntity;
 
 /**
  * @ORM\Entity
  */
-class  Player
+class  PlayerInvalid
 {
     /**
      * @ORM\Id

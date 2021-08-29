@@ -16,9 +16,9 @@
     ],
     "license": "MIT",
     "autoload": {
-        "classmap": [
-            "src/"
-        ]
+        "psr-4": {
+            "JakubGucen\\EntityConstantsGenerator\\": "src/"
+        }
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\JakubGucen\EntityConstantsGenerator\Helper;
+namespace JakubGucen\EntityConstantsGenerator\Tests\Helper;
 
 use JakubGucen\EntityConstantsGenerator\Exception\EntityFileException;
 use JakubGucen\EntityConstantsGenerator\Model\EntitiesData;
@@ -18,7 +18,7 @@ class GeneratorTest extends TestCase
 
     protected function tearDown(): void
     {
-        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/Entity';
+        $entityDir = $this->projectDir . '/test-resource/Entity';
 
         $path = $this->getEntityPath($entityDir, 'AttributeTmp');
         @unlink($path);
@@ -29,8 +29,8 @@ class GeneratorTest extends TestCase
 
     public function testRunEntity()
     {
-        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/Entity';
-        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\Entity';
+        $entityDir = $this->projectDir . '/test-resource/Entity';
+        $entityNamespace = 'JakubGucen\EntityConstantsGenerator\TestResource\Entity';
         $entityNames = [
             'Attribute',
             'Player'
@@ -61,8 +61,8 @@ class GeneratorTest extends TestCase
 
     public function testRunRegionEntity()
     {
-        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/RegionEntity';
-        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\RegionEntity';
+        $entityDir = $this->projectDir . '/test-resource/RegionEntity';
+        $entityNamespace = 'JakubGucen\EntityConstantsGenerator\TestResource\RegionEntity';
         $entityNames = [
             'Attribute',
             'Player',
@@ -86,8 +86,8 @@ class GeneratorTest extends TestCase
 
     public function testRunInvalidEntity(): void
     {
-        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidEntity';
-        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidEntity';
+        $entityDir = $this->projectDir . '/test-resource/InvalidEntity';
+        $entityNamespace = 'JakubGucen\EntityConstantsGenerator\TestResource\InvalidEntity';
         $entityNames = [
             'Player',
         ];
@@ -102,8 +102,8 @@ class GeneratorTest extends TestCase
 
     public function testRunInvalidRegionEntity(): void
     {
-        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidRegionEntity';
-        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidRegionEntity';
+        $entityDir = $this->projectDir . '/test-resource/InvalidRegionEntity';
+        $entityNamespace = 'JakubGucen\EntityConstantsGenerator\TestResource\InvalidRegionEntity';
         $entityNames = [
             'Player',
         ];
@@ -118,8 +118,8 @@ class GeneratorTest extends TestCase
 
     public function testRunInvalidOneEntity(): void
     {
-        $entityDir = $this->projectDir . '/test-resource/JakubGucen/EntityConstantsGenerator/InvalidOneEntity';
-        $entityNamespace = 'TestResource\JakubGucen\EntityConstantsGenerator\InvalidOneEntity';
+        $entityDir = $this->projectDir . '/test-resource/InvalidOneEntity';
+        $entityNamespace = 'JakubGucen\EntityConstantsGenerator\TestResource\InvalidOneEntity';
         $entityNames = [
             'Attribute',
             'Player',

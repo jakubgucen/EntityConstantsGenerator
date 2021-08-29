@@ -1,12 +1,21 @@
 <?php
 
-namespace TestResource\JakubGucen\EntityConstantsGenerator\Entity;
+namespace JakubGucen\EntityConstantsGenerator\TestResource\RegionEntity;
 
 /**
  * @ORM\Entity
  */
 class Attribute
 {
+    #region JakubGucen-EntityConstantsGenerator
+    use \JakubGucen\EntityConstantsGenerator\Traits\MetaEntityTrait;
+    const ID = 'id';
+    const ONE_HANDED = 'oneHanded';
+    const PLAYER = 'player';
+    const PLAYERS = 'players';
+    const STRENGTH = 'strength';
+    #endregion
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
